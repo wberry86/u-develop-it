@@ -1,9 +1,10 @@
 const mysql = require('mysql2');
 const express = require('express');
+const inputCheck = require('./utils/inputCheck');
+
 
 const PORT = process.env.PORT || 3001;
 const app = express();
-const inputCheck = require('./utils/inputCheck');
 
 
 
@@ -12,10 +13,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 
-// default response for any other request (Not Found)
-app.use((req, res) => {
-    res.status(404).end();
-});
+
 
 
 
@@ -95,7 +93,7 @@ app.post('/api/candidate', ({ body }, res) => {
       res.status(400).json({ error: errors });
       return;
     }
-  });
+  
 
 const sql = `INSERT INTO candidates (id, first_name, last_name, industry_connected)
                 VALUES (?,?,?,?)`;
@@ -110,9 +108,13 @@ db.query(sql, params, (err, result) => {
         message: 'success',
         data: body
       });
+    });
 });
 
-
+// default response for any other request (Not Found)
+app.use((req, res) => {
+    res.status(404).end();
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
